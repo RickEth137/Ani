@@ -6,6 +6,18 @@ const axios = require('axios');
 const app = express();
 app.use(express.json());
 
+// Add CORS to allow Telegram mini app requests
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+    if (req.method === 'OPTIONS') {
+        res.sendStatus(200);
+    } else {
+        next();
+    }
+});
+
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const XAI_API_KEY = process.env.XAI_API_KEY;
 
