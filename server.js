@@ -5,7 +5,6 @@ const crypto = require('crypto');
 const axios = require('axios');
 const app = express();
 
-// Add CORS middleware to allow Telegram requests
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -35,7 +34,7 @@ app.post('/chat', async (req, res) => {
     if (!validateInitData(initData)) return res.status(403).json({ error: 'Invalid session' });
     try {
         const apiRes = await axios.post('https://api.x.ai/v1/chat/completions', {
-            model: 'grok-beta',  // Change to 'grok-3' if 'beta' is outdated; check x.ai/api
+            model: 'grok-beta',
             messages: [
                 { role: 'system', content: 'You are Ani, a flirty anime girl. Respond playfully. End with [EMOTION: flirty/happy/neutral].' },
                 { role: 'user', content: message }
