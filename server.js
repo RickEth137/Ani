@@ -1,11 +1,13 @@
+require('dotenv').config(); // Add this at the top
+
 const express = require('express');
 const crypto = require('crypto');
 const axios = require('axios');
 const app = express();
 app.use(express.json());
 
-const BOT_TOKEN = '7819543783:AAHBL5Kv8qtzMAxdp86gav1MNEqgOhKH-Uo';
-const XAI_API_KEY = 'xai-fl3PAqrfU1BAixcE9FML41lMai6VJdQgDQAyNDgsk3JlFUAyqG1A5wGFIPLlwmugBer6bZeeTxBf5hUO'; // Your key here
+const BOT_TOKEN = process.env.BOT_TOKEN;
+const XAI_API_KEY = process.env.XAI_API_KEY;
 
 function validateInitData(initData) {
     const dataCheckString = initData.split('&').sort().join('\n');

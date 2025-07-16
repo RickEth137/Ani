@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ani Companion</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: Arial; margin: 10px; }
+        #character-container { width: 300px; height: 400px; margin: 0 auto; }
+        #chat-window { height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; }
+        #input-area { display: flex; margin-top: 10px; }
+        #user-input { flex: 1; padding: 10px; }
+        #send-btn { padding: 10px; background: #007bff; color: white; border: none; }
+    </style>
+</head>
+<body>
+    <div id="character-container"><canvas id="live2d-canvas" width="300" height="400"></canvas></div>
+    <div id="chat-window"></div>
+    <div id="input-area">
+        <input id="user-input" type="text" placeholder="Chat with Ani...">
+        <button id="send-btn">Send</button>
+    </div>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        // Placeholder for Live2D and chat logic (added later)
+    </script>
+</body>
+</html>
