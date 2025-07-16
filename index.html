@@ -7,17 +7,17 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body { font-family: Arial; margin: 10px; transition: background 0.3s; }
-        #character-container { width: 300px; height: 400px; margin: 0 auto; position: relative; border: 1px solid #ccc; background: #fff; } /* Visible border and bg */
+        #character-container { width: 300px; height: 400px; margin: 0 auto; position: relative; border: 1px solid; background: #fff; } /* Visible bg and border */
         #live2d-canvas { width: 100%; height: 100%; }
-        #chat-window { height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-top: 10px; background: #fff; color: #000; }
+        #chat-window { height: 200px; overflow-y: scroll; border: 1px solid; padding: 10px; margin-top: 10px; background: #fff; color: #000; }
         #input-area { display: flex; margin-top: 10px; }
-        #user-input { flex: 1; padding: 10px; border: 1px solid #ccc; background: #fff; color: #000; }
+        #user-input { flex: 1; padding: 10px; border: 1px solid; background: #fff; color: #000; }
         #send-btn { padding: 10px 20px; background: #ff69b4; color: white; border: none; cursor: pointer; }
     </style>
 </head>
 <body>
     <div id="character-container"><canvas id="live2d-canvas"></canvas></div>
-    <div id="chat-window"><p>Welcome to Ani! Send a message to chat.</p></div> <!-- Visible welcome to test -->
+    <div id="chat-window"><p style="color: #000">Welcome to Ani! Send a message to chat.</p></div> /* Visible test text */
     <div id="input-area">
         <input id="user-input" type="text" placeholder="Chat with Ani...">
         <button id="send-btn">Send</button>
@@ -28,7 +28,7 @@
         tg.ready();
         tg.expand();
 
-        // Theme matching to fix blank in dark mode
+        // Theme matching to fix dark mode blank
         const theme = tg.themeParams;
         document.body.style.background = theme.bg_color || '#f0f0f0';
         document.body.style.color = theme.text_color || '#000';
@@ -43,6 +43,9 @@
         const sendBtn = document.getElementById('send-btn');
         sendBtn.style.background = theme.button_color || '#ff69b4';
         sendBtn.style.color = theme.button_text_color || '#fff';
+        document.getElementById('character-container').style.borderColor = theme.hint_color || '#ccc';
+
+        chatWindow.scrollTop = chatWindow.scrollHeight;
 
         sendBtn.addEventListener('click', async () => {
             const message = userInput.value.trim();
@@ -58,13 +61,15 @@
                 chatWindow.innerHTML += `<p style="color: ${theme.text_color || '#000'}"><strong>Ani:</strong> ${res.text}</p>`;
                 chatWindow.scrollTop = chatWindow.scrollHeight;
 
-                // TTS
+                // TTS for talking
                 const utterance = new SpeechSynthesisUtterance(res.text);
-                utterance.voice = speechSynthesis.getVoices().find(v => v.lang.startsWith('ja-'));
+                utterance.voice = speechSynthesis.getVoices().find(v => v.lang.startsWith('ja-')) || null;
                 speechSynthesis.speak(utterance);
 
-                // Emotion (for Live2D later)
-                if (res.emotion === 'flirty') console.log('Flirty mode'); // Placeholder
+                // Emotion placeholder
+                if (res.emotion === 'flirty') {
+                    console.log('Flirty mode');
+                }
             } catch (e) {
                 chatWindow.innerHTML += `<p style="color: red">Error: ${e.message}</p>`;
             }
