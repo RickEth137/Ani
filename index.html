@@ -38,7 +38,7 @@
         chatWindow.innerHTML += `<p style="color: ${theme.text_color || '#000'}"><strong>You:</strong> ${message}</p>`;
         userInput.value = '';
         try {
-            const res = await fetch('https://your-render-backend-url.com/chat', { // Replace with your Render URL from next step
+            const res = await fetch('https://ani-backend-7w55.onrender.com', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message, initData: tg.initData })
