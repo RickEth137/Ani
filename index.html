@@ -1,68 +1,76 @@
-<style>
-    body { font-family: Arial; margin: 10px; transition: background 0.3s; }
-    #character-container { width: 300px; height: 400px; margin: 0 auto; position: relative; border: 1px solid; } /* Add border for visibility */
-    #live2d-canvas { width: 100%; height: 100%; }
-    #chat-window { height: 200px; overflow-y: scroll; border: 1px solid; padding: 10px; margin-top: 10px; }
-    #input-area { display: flex; margin-top: 10px; }
-    #user-input { flex: 1; padding: 10px; border: 1px solid; }
-    #send-btn { padding: 10px 20px; background: #ff69b4; color: white; border: none; cursor: pointer; }
-    /* Fallback styles */
-    body { background: #f0f0f0; color: #000; }
-    #chat-window, #user-input { background: #fff; border-color: #ccc; color: #000; }
-</style>
-<script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand(); // Full screen mode for better layout
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ani Companion</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: Arial; margin: 10px; transition: background 0.3s; }
+        #character-container { width: 300px; height: 400px; margin: 0 auto; position: relative; border: 1px solid #ccc; background: #fff; } /* Visible border and bg */
+        #live2d-canvas { width: 100%; height: 100%; }
+        #chat-window { height: 200px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-top: 10px; background: #fff; color: #000; }
+        #input-area { display: flex; margin-top: 10px; }
+        #user-input { flex: 1; padding: 10px; border: 1px solid #ccc; background: #fff; color: #000; }
+        #send-btn { padding: 10px 20px; background: #ff69b4; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div id="character-container"><canvas id="live2d-canvas"></canvas></div>
+    <div id="chat-window"><p>Welcome to Ani! Send a message to chat.</p></div> <!-- Visible welcome to test -->
+    <div id="input-area">
+        <input id="user-input" type="text" placeholder="Chat with Ani...">
+        <button id="send-btn">Send</button>
+    </div>
 
-    // Apply Telegram theme to fix blank/dark mode issues
-    const theme = tg.themeParams;
-    document.body.style.background = theme.bg_color || '#f0f0f0';
-    document.body.style.color = theme.text_color || '#000';
-    document.getElementById('character-container').style.borderColor = theme.hint_color || '#ccc';
-    document.getElementById('chat-window').style.background = theme.secondary_bg_color || '#fff';
-    document.getElementById('chat-window').style.borderColor = theme.hint_color || '#ccc';
-    document.getElementById('chat-window').style.color = theme.text_color || '#000';
-    document.getElementById('user-input').style.background = theme.secondary_bg_color || '#fff';
-    document.getElementById('user-input').style.borderColor = theme.hint_color || '#ccc';
-    document.getElementById('user-input').style.color = theme.text_color || '#000';
-    document.getElementById('send-btn').style.background = theme.button_color || '#ff69b4';
-    document.getElementById('send-btn').style.color = theme.button_text_color || '#fff';
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
 
-    const chatWindow = document.getElementById('chat-window');
-    const userInput = document.getElementById('user-input');
-    const sendBtn = document.getElementById('send-btn');
+        // Theme matching to fix blank in dark mode
+        const theme = tg.themeParams;
+        document.body.style.background = theme.bg_color || '#f0f0f0';
+        document.body.style.color = theme.text_color || '#000';
+        const chatWindow = document.getElementById('chat-window');
+        chatWindow.style.background = theme.secondary_bg_color || '#fff';
+        chatWindow.style.borderColor = theme.hint_color || '#ccc';
+        chatWindow.style.color = theme.text_color || '#000';
+        const userInput = document.getElementById('user-input');
+        userInput.style.background = theme.secondary_bg_color || '#fff';
+        userInput.style.borderColor = theme.hint_color || '#ccc';
+        userInput.style.color = theme.text_color || '#000';
+        const sendBtn = document.getElementById('send-btn');
+        sendBtn.style.background = theme.button_color || '#ff69b4';
+        sendBtn.style.color = theme.button_text_color || '#fff';
 
-    // Test render to ensure visibility (add a welcome message)
-    chatWindow.innerHTML += `<p style="color: ${theme.text_color || '#000'}">Welcome to Ani! Say hi to start chatting.</p>`;
+        sendBtn.addEventListener('click', async () => {
+            const message = userInput.value.trim();
+            if (!message) return;
+            chatWindow.innerHTML += `<p style="color: ${theme.text_color || '#000'}"><strong>You:</strong> ${message}</p>`;
+            userInput.value = '';
+            try {
+                const res = await fetch('https://ani-backend-7w55.onrender.com/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, initData: tg.initData })
+                }).then(r => r.json());
+                chatWindow.innerHTML += `<p style="color: ${theme.text_color || '#000'}"><strong>Ani:</strong> ${res.text}</p>`;
+                chatWindow.scrollTop = chatWindow.scrollHeight;
 
-    sendBtn.addEventListener('click', async () => {
-        const message = userInput.value.trim();
-        if (!message) return;
-        chatWindow.innerHTML += `<p style="color: ${theme.text_color || '#000'}"><strong>You:</strong> ${message}</p>`;
-        userInput.value = '';
-        try {
-            const res = await fetch('https://ani-backend-7w55.onrender.com/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message, initData: tg.initData })
-            }).then(r => r.json());
-            chatWindow.innerHTML += `<p style="color: ${theme.text_color || '#000'}"><strong>Ani:</strong> ${res.text}</p>`;
-            chatWindow.scrollTop = chatWindow.scrollHeight;
+                // TTS
+                const utterance = new SpeechSynthesisUtterance(res.text);
+                utterance.voice = speechSynthesis.getVoices().find(v => v.lang.startsWith('ja-'));
+                speechSynthesis.speak(utterance);
 
-            // TTS for talking
-            const utterance = new SpeechSynthesisUtterance(res.text);
-            utterance.voice = speechSynthesis.getVoices().find(v => v.lang.startsWith('ja-')) || null;
-            speechSynthesis.speak(utterance);
-
-            // Emotion trigger (for future character)
-            if (res.emotion === 'flirty') {
-                // Live2D motion here
+                // Emotion (for Live2D later)
+                if (res.emotion === 'flirty') console.log('Flirty mode'); // Placeholder
+            } catch (e) {
+                chatWindow.innerHTML += `<p style="color: red">Error: ${e.message}</p>`;
             }
-        } catch (e) {
-            chatWindow.innerHTML += `<p style="color: red">Error: ${e.message}</p>`;
-        }
-    });
+        });
 
-    speechSynthesis.onvoiceschanged = () => {};
-</script>
+        speechSynthesis.onvoiceschanged = () => {};
+    </script>
+</body>
+</html>
