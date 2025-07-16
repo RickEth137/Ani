@@ -1,0 +1,26 @@
+{
+  "name": "ani-mini-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "axios": "^1.10.0",
+    "express": "^5.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RickEth137/Ani.git"
+  },
+  "bugs": {
+    "url": "https://github.com/RickEth137/Ani/issues"
+  },
+  "homepage": "https://github.com/RickEth137/Ani#readme"
+}
