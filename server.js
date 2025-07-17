@@ -22,7 +22,8 @@ const BOT_TOKEN = process.env.BOT_TOKEN;
 const XAI_API_KEY = process.env.XAI_API_KEY;
 
 function validateInitData(initData) {
-    const dataCheckString = initData.split('&').sort().join('\n');
+    const pairs = initData.split('&').filter(p => !p.startsWith('hash='));
+    const dataCheckString = pairs.sort().join('\n');
     const secretKey = crypto.createHmac('sha256', 'WebAppData').update(BOT_TOKEN).digest();
     const hash = crypto.createHmac('sha256', secretKey).update(dataCheckString).digest('hex');
     const providedHash = new URLSearchParams(initData).get('hash');
